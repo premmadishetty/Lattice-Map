@@ -1,0 +1,180 @@
+{
+  "meta": {
+    "scanned_dir": "/project/crypto_app",
+    "total_files": 14,
+    "red": 5,
+    "yellow": 4,
+    "green": 3,
+    "grey": 2,
+    "quantum_debt_score": 64.3,
+    "migrated": 3
+  },
+  "nodes": [
+    {
+      "id": "auth.session",
+      "label": "auth/session.py",
+      "color": "red",
+      "risk_score": 10,
+      "size": 4821,
+      "crypto_found": [
+        { "algorithm": "RSA", "severity": "CRITICAL", "matches": ["RSA.generate", "PKCS1_OAEP"], "mitigation": "Replace with ML-KEM-768 (key encapsulation) or ML-DSA-65 (signatures) per FIPS 203/204." },
+        { "algorithm": "SHA-1", "severity": "CRITICAL", "matches": ["hashlib.sha1"], "mitigation": "Replace with SHA-256 or SHA-3-256 immediately. SHA-1 is fully broken." }
+      ],
+      "imports": ["crypto.utils", "db.models"]
+    },
+    {
+      "id": "crypto.utils",
+      "label": "crypto/utils.py",
+      "color": "red",
+      "risk_score": 9.5,
+      "size": 7203,
+      "crypto_found": [
+        { "algorithm": "RSA", "severity": "CRITICAL", "matches": ["RSA", "generate_private_key"], "mitigation": "Replace with ML-KEM-768 (key encapsulation) or ML-DSA-65 (signatures) per FIPS 203/204." },
+        { "algorithm": "ECDSA", "severity": "CRITICAL", "matches": ["ECDSA", "SECP256K1"], "mitigation": "Replace with ML-DSA-65 or SLH-DSA-128s per NIST FIPS 204/205." }
+      ],
+      "imports": ["crypto.primitives"]
+    },
+    {
+      "id": "crypto.primitives",
+      "label": "crypto/primitives.py",
+      "color": "red",
+      "risk_score": 9,
+      "size": 5540,
+      "crypto_found": [
+        { "algorithm": "Diffie-Hellman", "severity": "CRITICAL", "matches": ["DHParameters", "dh.generate_parameters"], "mitigation": "Replace key exchange with ML-KEM-768 (Kyber) per NIST FIPS 203." },
+        { "algorithm": "MD5", "severity": "CRITICAL", "matches": ["hashlib.md5", "MD5"], "mitigation": "Replace with SHA-256 or BLAKE2b. MD5 is cryptographically broken." }
+      ],
+      "imports": []
+    },
+    {
+      "id": "payments.processor",
+      "label": "payments/processor.py",
+      "color": "red",
+      "risk_score": 8,
+      "size": 9102,
+      "crypto_found": [
+        { "algorithm": "AES-CBC", "severity": "CRITICAL", "matches": ["AES", "modes.CBC", "CBC"], "mitigation": "Replace with AES-256-GCM or ChaCha20-Poly1305 for authenticated encryption." },
+        { "algorithm": "DSA", "severity": "CRITICAL", "matches": ["DSA"], "mitigation": "Replace with ML-DSA-65 (Dilithium) per NIST FIPS 204." }
+      ],
+      "imports": ["crypto.utils", "db.models"]
+    },
+    {
+      "id": "legacy.compat",
+      "label": "legacy/compat.py",
+      "color": "red",
+      "risk_score": 10,
+      "size": 3310,
+      "crypto_found": [
+        { "algorithm": "RC4", "severity": "CRITICAL", "matches": ["RC4", "ARC4"], "mitigation": "Remove RC4 immediately. Use ChaCha20-Poly1305 instead." },
+        { "algorithm": "DES", "severity": "CRITICAL", "matches": ["DES"], "mitigation": "Remove DES immediately. It provides ~56-bit security, trivially broken." }
+      ],
+      "imports": []
+    },
+    {
+      "id": "api.endpoints",
+      "label": "api/endpoints.py",
+      "color": "yellow",
+      "risk_score": 5,
+      "size": 12044,
+      "crypto_found": [],
+      "imports": ["auth.session", "payments.processor", "services.mailer"]
+    },
+    {
+      "id": "services.mailer",
+      "label": "services/mailer.py",
+      "color": "yellow",
+      "risk_score": 5,
+      "size": 2891,
+      "crypto_found": [],
+      "imports": ["crypto.utils"]
+    },
+    {
+      "id": "admin.dashboard",
+      "label": "admin/dashboard.py",
+      "color": "yellow",
+      "risk_score": 5,
+      "size": 6670,
+      "crypto_found": [],
+      "imports": ["auth.session", "db.models"]
+    },
+    {
+      "id": "cli.tools",
+      "label": "cli/tools.py",
+      "color": "yellow",
+      "risk_score": 5,
+      "size": 3201,
+      "crypto_found": [],
+      "imports": ["legacy.compat"]
+    },
+    {
+      "id": "pqc.keymanager",
+      "label": "pqc/keymanager.py",
+      "color": "green",
+      "risk_score": 0,
+      "size": 8830,
+      "crypto_found": [
+        { "algorithm": "ML-KEM (Kyber)", "severity": "SECURE", "matches": [], "mitigation": "✅ Already using PQC-safe algorithm." },
+        { "algorithm": "ML-DSA (Dilithium)", "severity": "SECURE", "matches": [], "mitigation": "✅ Already using PQC-safe algorithm." }
+      ],
+      "imports": []
+    },
+    {
+      "id": "pqc.signatures",
+      "label": "pqc/signatures.py",
+      "color": "green",
+      "risk_score": 0,
+      "size": 4422,
+      "crypto_found": [
+        { "algorithm": "SLH-DSA (SPHINCS+)", "severity": "SECURE", "matches": [], "mitigation": "✅ Already using PQC-safe algorithm." },
+        { "algorithm": "SHA-3", "severity": "SECURE", "matches": [], "mitigation": "✅ Already using PQC-safe algorithm." }
+      ],
+      "imports": ["pqc.keymanager"]
+    },
+    {
+      "id": "pqc.transport",
+      "label": "pqc/transport.py",
+      "color": "green",
+      "risk_score": 0,
+      "size": 5100,
+      "crypto_found": [
+        { "algorithm": "AES-GCM", "severity": "SECURE", "matches": [], "mitigation": "✅ Already using PQC-safe algorithm." },
+        { "algorithm": "ML-KEM (Kyber)", "severity": "SECURE", "matches": [], "mitigation": "✅ Already using PQC-safe algorithm." }
+      ],
+      "imports": ["pqc.keymanager"]
+    },
+    {
+      "id": "db.models",
+      "label": "db/models.py",
+      "color": "grey",
+      "risk_score": 0,
+      "size": 14220,
+      "crypto_found": [],
+      "imports": []
+    },
+    {
+      "id": "config.settings",
+      "label": "config/settings.py",
+      "color": "grey",
+      "risk_score": 0,
+      "size": 1880,
+      "crypto_found": [],
+      "imports": []
+    }
+  ],
+  "links": [
+    { "source": "auth.session", "target": "crypto.utils" },
+    { "source": "auth.session", "target": "db.models" },
+    { "source": "crypto.utils", "target": "crypto.primitives" },
+    { "source": "payments.processor", "target": "crypto.utils" },
+    { "source": "payments.processor", "target": "db.models" },
+    { "source": "api.endpoints", "target": "auth.session" },
+    { "source": "api.endpoints", "target": "payments.processor" },
+    { "source": "api.endpoints", "target": "services.mailer" },
+    { "source": "services.mailer", "target": "crypto.utils" },
+    { "source": "admin.dashboard", "target": "auth.session" },
+    { "source": "admin.dashboard", "target": "db.models" },
+    { "source": "cli.tools", "target": "legacy.compat" },
+    { "source": "pqc.signatures", "target": "pqc.keymanager" },
+    { "source": "pqc.transport", "target": "pqc.keymanager" }
+  ]
+}
