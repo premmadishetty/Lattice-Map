@@ -7,7 +7,7 @@
 
 <br/><br/>
 
-<h2 align="center" style="font-size: 80 px;">Lattice Map</h2>
+<h3 align="center" style="font-size: 80 px;">Lattice Map</h3>
 
 ### Post-Quantum Cryptography Audit Platform · 2026 Standard
 
